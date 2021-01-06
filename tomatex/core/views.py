@@ -1,4 +1,3 @@
-import ipdb
 from tomatex.core.serializers import TaskSerializer
 from rest_framework import status
 from rest_framework.response import Response
