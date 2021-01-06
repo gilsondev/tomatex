@@ -1,7 +1,9 @@
 from django.urls import path
 
-from tomatex.core.views import TaskCreateAPIView
+from tomatex.core.views import TaskCreateAPIView, TaskDetailAPIView
 
 urlpatterns = [
-    path('api/tasks', TaskCreateAPIView.as_view(), name='create_task_resource')
+    path('tasks', TaskCreateAPIView.as_view(), name='tasks_resource'),
+    path('tasks/<uuid:uid>', TaskDetailAPIView.as_view(),
+         name='tasks_detail_resource'),
 ]
