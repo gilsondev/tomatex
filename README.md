@@ -93,10 +93,10 @@ Body:
 
 - [x] Preparar settings.py para 12 Factors (python-decouple)
 - [x] Preparar para o PostgreSQL
-- [ ] Incluir o flake8, black e isort
-- [ ] Incluir o pre-commit para verificar codigo (flake8, black e isort), e outras coisas
-- [ ] Criar Github Actions workflow para:
-    - [ ] Verificar lint
-    - [ ] Rodar os testes
+- [x] Incluir o flake8, black e isort
+- [x] Incluir o pre-commit para verificar codigo (flake8, black e isort), e outras coisas
+- [x] Criar Github Actions workflow para:
+    - [x] Verificar lint
+    - [x] Rodar os testes
     - [ ] Verificar cobertura (Codecov)
-    - [ ] Efetuar o deploy no heroku
+    - [x] Efetuar o deploy no heroku
