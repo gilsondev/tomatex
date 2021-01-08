@@ -2,6 +2,7 @@ import uuid
 
 from django.db import models
 
+
 class Task(models.Model):
     uid = models.UUIDField(default=uuid.uuid4)
     description = models.CharField(max_length=255)

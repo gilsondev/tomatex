@@ -91,8 +91,8 @@ Body:
 
 ## TODO
 
-- [ ] Preparar settings.py para 12 Factors (python-decouple)
-- [ ] Preparar para o PostgreSQL
+- [x] Preparar settings.py para 12 Factors (python-decouple)
+- [x] Preparar para o PostgreSQL
 - [ ] Incluir o flake8, black e isort
 - [ ] Incluir o pre-commit para verificar codigo (flake8, black e isort), e outras coisas
 - [ ] Criar Github Actions workflow para:
