@@ -1,4 +1,6 @@
 # Tomatex
+![Tomatex CI](https://github.com/gilsondev/tomatex/workflows/Tomatex%20CI/badge.svg)
+[![codecov](https://codecov.io/gh/gilsondev/tomatex/branch/main/graph/badge.svg?token=QQXYQBZA7A)](https://codecov.io/gh/gilsondev/tomatex)
 
 Pomodoro timer web feito em Python e Django
 
