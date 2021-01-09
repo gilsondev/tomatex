@@ -38,6 +38,12 @@ repos:
     - id: migrations-check
       language: system
       name: Check for uncreated migrations.
-      entry: bash -c "pipenv run ./manage.py makemigrations --check --dry-run"
+      entry: bash -c "poetry run ./manage.py makemigrations --check --dry-run"
+      types: ["python"]
+      pass_filenames: false
+    - id: generate-requirements
+      language: system
+      name: Update the requirements.txt
+      entry: bash -c "poetry export -f requirements.txt --output requirements.txt"
       types: ["python"]
       pass_filenames: false
