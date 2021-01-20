@@ -1,7 +1,8 @@
 import pytest
+from rest_framework.exceptions import ValidationError
 
 from tomatex.core.models import Task
-from tomatex.core.serializers import TaskSerializer
+from tomatex.core.serializers import TaskPomodoroSerializer, TaskSerializer
 
 
 def test_task_serializer():
@@ -29,3 +30,43 @@ def test_task_model_serializer():
 
     # TODO: Verify field and your value. Use mock in datetime now
     assert serializer.data["created_at"]
+
+
+def test_pomodoro_serializer():
+    pomodoro = {
+        "started_at": "2020-01-01T12:00:00Z",
+        "ended_at": "2020-01-01T12:25:00Z",
+    }
+
+    serializer = TaskPomodoroSerializer(data=pomodoro)
+
+    assert serializer.is_valid()
+    assert serializer.data["started_at"] == pomodoro["started_at"]
+    assert serializer.data["ended_at"] == pomodoro["ended_at"]
+    assert "started_at" in serializer.fields
+    assert "ended_at" in serializer.fields
+    assert "completed" in serializer.fields
+
+
+def test_valid_pomodoro_serializer():
+    pomodoro = {
+        "started_at": "2020-01-01T12:00:00Z",
+        "ended_at": "2020-01-01T12:25:00Z",
+    }
+
+    serializer = TaskPomodoroSerializer(data=pomodoro)
+
+    assert serializer.is_valid()
+    assert serializer.data["completed"]
+
+
+def test_invalid_pomodoro_serializer():
+    pomodoro = {
+        "started_at": "2020-01-01T12:00:00Z",
+        "ended_at": "2020-01-01T12:05:00Z",
+    }
+
+    serializer = TaskPomodoroSerializer(data=pomodoro)
+
+    assert serializer.is_valid()
+    assert not serializer.data["completed"]

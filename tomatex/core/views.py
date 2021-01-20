@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from tomatex.core.models import Task
-from tomatex.core.serializers import TaskSerializer
+from tomatex.core.serializers import TaskPomodoroSerializer, TaskSerializer
 
 
 class TaskCreateAPIView(APIView):
@@ -41,3 +41,39 @@ class TaskDetailAPIView(APIView):
         task.delete()
 
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class TaskPomodoroAPIView(APIView):
+    def get(self, request, uid):
+        import uuid
+
+        return Response(
+            [
+                {
+                    "uid": uuid.uuid4(),
+                    "description": "Task Name",
+                    "completed": [
+                        {
+                            "started_at": "2020-01-01T12:00:00",
+                            "ended_at": "2020-01-01T12:25:00",
+                            "duration": "25:00",
+                        }
+                    ],
+                }
+            ]
+        )
+
+    def post(self, request, uid):
+        task = get_object_or_404(Task, uid=uid)
+        serializer = TaskPomodoroSerializer(data=request.data)
+        return Response(
+            {
+                "uid": task.uid,
+                "pomodoro": {
+                    "started_at": serializer.initial_data["started_at"],
+                    "ended_at": serializer.initial_data["ended_at"],
+                    "completed": True,
+                },
+            },
+            status=status.HTTP_201_CREATED,
+        )
