@@ -113,3 +113,55 @@ def test_remove_task(client, add_task):
 
     assert resp.status_code == 204
     assert not Task.objects.exists()
+
+
+def test_request_task_pomodoros(client):
+    import uuid
+
+    uid = uuid.uuid4()
+    resp = client.get(f"/api/tasks/{uid}/pomodoros")
+
+    assert resp.status_code == 200
+
+
+def test_response_task_pomodoros(client):
+    import uuid
+
+    uid = uuid.uuid4()
+    resp = client.get(f"/api/tasks/{uid}/pomodoros")
+
+    assert len(resp.data) > 0
+    assert "uid" in resp.data[0]
+    assert resp.data[0]["description"] == "Task Name"
+    assert len(resp.data[0]["completed"]) > 0
+    assert resp.data[0]["completed"][0]["started_at"] == "2020-01-01T12:00:00"
+    assert resp.data[0]["completed"][0]["ended_at"] == "2020-01-01T12:25:00"
+    assert resp.data[0]["completed"][0]["duration"] == "25:00"
+
+
+@pytest.mark.django_db
+def test_create_new_pomodoro(client, add_task):
+    task = add_task(description="Task #1")
+
+    resp = client.post(
+        f"/api/tasks/{task.uid}/pomodoros",
+        {"started_at": "2020-01-01T12:00:00", "ended_at": "2020-01-01T12:25:00"},
+        content_type="application/json",
+    )
+
+    assert resp.status_code == 201
+
+
+@pytest.mark.django_db
+def test_response_create_new_pomodoro(client, add_task):
+    task = add_task(description="Task #1")
+
+    data = {"started_at": "2020-01-01T12:00:00", "ended_at": "2020-01-01T12:25:00"}
+    resp = client.post(
+        f"/api/tasks/{task.uid}/pomodoros", data, content_type="application/json"
+    )
+
+    assert resp.data["uid"] == task.uid
+    assert resp.data["pomodoro"]["started_at"] == data["started_at"]
+    assert resp.data["pomodoro"]["ended_at"] == data["ended_at"]
+    assert resp.data["pomodoro"]["completed"]
