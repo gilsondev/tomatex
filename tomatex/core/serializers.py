@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from tomatex.core.models import Task
+from tomatex.core.models import Pomodoro, Task
 
 POMODORO_UNIT_TIMER = 25
 ONE_MINUTE = 60
@@ -16,20 +16,18 @@ class TaskSerializer(serializers.ModelSerializer):
         ]
 
 
-class TaskPomodoroSerializer(serializers.Serializer):
-    started_at = serializers.DateTimeField()
-    ended_at = serializers.DateTimeField()
-    completed = serializers.BooleanField(read_only=True)
+class TaskPomodoroSerializer(serializers.ModelSerializer):
+    # started_at = serializers.DateTimeField()
+    # ended_at = serializers.DateTimeField()
+    # completed = serializers.BooleanField(read_only=True)
 
-    def validate(self, data):
-        started_at = data["started_at"]
-        ended_at = data["ended_at"]
-        data["completed"] = False
+    class Meta:
+        model = Pomodoro
+        fields = ("id", "started_at", "ended_at", "completed")
 
-        diff = ended_at - started_at
-        total_minutes = diff.seconds / ONE_MINUTE
+    def __init__(self, task, **kwargs):
+        self.task = task
+        super().__init__(**kwargs)
 
-        if total_minutes >= POMODORO_UNIT_TIMER:
-            data["completed"] = True
-
-        return data
+    def create(self, validated_data):
+        return Pomodoro.objects.create(task=self.task, **validated_data)

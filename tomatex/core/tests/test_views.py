@@ -2,6 +2,7 @@ import pytest
 from django.urls import reverse
 from rest_framework import status
 
+from tomatex.core.serializers import TaskPomodoroSerializer
 from tomatex.core.models import Task
 
 task_new_data = {"description": "Task Test"}
@@ -143,9 +144,10 @@ def test_response_task_pomodoros(client):
 def test_create_new_pomodoro(client, add_task):
     task = add_task(description="Task #1")
 
+    data = {"started_at": "2020-01-01T12:00:00", "ended_at": "2020-01-01T12:25:00"}
     resp = client.post(
         f"/api/tasks/{task.uid}/pomodoros",
-        {"started_at": "2020-01-01T12:00:00", "ended_at": "2020-01-01T12:25:00"},
+        data,
         content_type="application/json",
     )
 
@@ -156,12 +158,15 @@ def test_create_new_pomodoro(client, add_task):
 def test_response_create_new_pomodoro(client, add_task):
     task = add_task(description="Task #1")
 
-    data = {"started_at": "2020-01-01T12:00:00", "ended_at": "2020-01-01T12:25:00"}
+    data = {"started_at": "2020-01-01T12:00:00Z", "ended_at": "2020-01-01T12:25:00Z"}
     resp = client.post(
         f"/api/tasks/{task.uid}/pomodoros", data, content_type="application/json"
     )
 
-    assert resp.data["uid"] == task.uid
-    assert resp.data["pomodoro"]["started_at"] == data["started_at"]
-    assert resp.data["pomodoro"]["ended_at"] == data["ended_at"]
-    assert resp.data["pomodoro"]["completed"]
+    task = Task.objects.get(uid=task.uid)
+    pomodoro = task.pomodoros.first()
+    serializer = TaskPomodoroSerializer(task=task, instance=pomodoro)
+
+    assert resp.data["started_at"] == serializer.data["started_at"]
+    assert resp.data["ended_at"] == serializer.data["ended_at"]
+    assert resp.data["completed"]
