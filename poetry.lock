@@ -204,6 +204,20 @@ optional = false
 python-versions = "*"
 
 [[package]]
+name = "gunicorn"
+version = "20.0.4"
+description = "WSGI HTTP Server for UNIX"
+category = "main"
+optional = false
+python-versions = ">=3.4"
+
+[package.extras]
+eventlet = ["eventlet (>=0.9.7)"]
+gevent = ["gevent (>=0.13)"]
+setproctitle = ["setproctitle"]
+tornado = ["tornado (>=0.2)"]
+
+[[package]]
 name = "humanize"
 version = "3.2.0"
 description = "Python humanize utilities"
@@ -606,7 +620,7 @@ python-versions = "*"
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "3542efd350dac7c6fec0da6d538281d54e4679d3df461a5d8d670b8e0a75f5e8"
+content-hash = "634d25ae869c652edddc62580955ceff6627b5d4f1a9db5cfde72a965a468539"
 
 [metadata.files]
 appdirs = [
@@ -728,6 +742,10 @@ flake8 = [
 ]
 freezefrog = [
     {file = "freezefrog-0.4.1.tar.gz", hash = "sha256:b35f6eb17bd79351d74f8536458090a79fde4d5af8de067816c1653b026fb752"},
+]
+gunicorn = [
+    {file = "gunicorn-20.0.4-py2.py3-none-any.whl", hash = "sha256:cd4a810dd51bf497552cf3f863b575dabd73d6ad6a91075b65936b151cbf4f9c"},
+    {file = "gunicorn-20.0.4.tar.gz", hash = "sha256:1904bb2b8a43658807108d59c3f3d56c2b6121a701161de0ddf9ad140073c626"},
 ]
 humanize = [
     {file = "humanize-3.2.0-py3-none-any.whl", hash = "sha256:d47d80cd47c1511ed3e49ca5f10c82ed940ea020b45b49ab106ed77fa8bb9d22"},
