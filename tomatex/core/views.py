@@ -65,15 +65,16 @@ class TaskPomodoroAPIView(APIView):
 
     def post(self, request, uid):
         task = get_object_or_404(Task, uid=uid)
-        serializer = TaskPomodoroSerializer(data=request.data)
+        serializer = TaskPomodoroSerializer(task=task, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+
+        # data = {
+        #     "started_at": serializer.initial_data["started_at"],
+        #     "ended_at": serializer.initial_data["ended_at"],
+        #     "completed": True,
+        # }
         return Response(
-            {
-                "uid": task.uid,
-                "pomodoro": {
-                    "started_at": serializer.initial_data["started_at"],
-                    "ended_at": serializer.initial_data["ended_at"],
-                    "completed": True,
-                },
-            },
+            serializer.data,
             status=status.HTTP_201_CREATED,
         )
