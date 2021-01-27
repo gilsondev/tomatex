@@ -1,7 +1,12 @@
 import pytest
+import json
 
 from tomatex.core.models import Task
-from tomatex.core.serializers import TaskPomodoroSerializer, TaskSerializer
+from tomatex.core.serializers import (
+    TaskPomodoroSerializer,
+    TaskSerializer,
+    TaskPomodorosSerializer,
+)
 
 
 def test_task_serializer():
@@ -65,3 +70,19 @@ def test_create_pomodoro_serializer(add_task):
     assert pomodoro.id
     assert pomodoro.task.id == task.id
     assert pomodoro.completed
+
+
+@pytest.mark.django_db
+def test_list_pomodoro_serializer(add_task, add_pomodoro):
+    task = add_task(description="Task Pomodoro")
+    add_pomodoro(task=task, completed=True)
+
+    data = {
+        "uid": str(task.uid),
+        "description": task.description,
+        "pomodoros": {"completed": 1, "incompleted": 0},
+    }
+
+    serializer = TaskPomodorosSerializer(task)
+
+    assert json.dumps(serializer.data) == json.dumps(data)

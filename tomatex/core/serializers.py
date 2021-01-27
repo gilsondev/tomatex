@@ -17,10 +17,6 @@ class TaskSerializer(serializers.ModelSerializer):
 
 
 class TaskPomodoroSerializer(serializers.ModelSerializer):
-    # started_at = serializers.DateTimeField()
-    # ended_at = serializers.DateTimeField()
-    # completed = serializers.BooleanField(read_only=True)
-
     class Meta:
         model = Pomodoro
         fields = ("id", "started_at", "ended_at", "completed")
@@ -31,3 +27,27 @@ class TaskPomodoroSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         return Pomodoro.objects.create(task=self.task, **validated_data)
+
+
+class PomodorosInfoSerializer(serializers.ModelSerializer):
+    completed = serializers.SerializerMethodField()
+    incompleted = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Task
+        fields = ["completed", "incompleted"]
+
+    def get_completed(self, obj):
+        return obj.total_completed()
+
+    def get_incompleted(self, obj):
+        return obj.total_incompleted()
+
+
+class TaskPomodorosSerializer(serializers.ModelSerializer):
+    pomodoros = PomodorosInfoSerializer()
+
+    class Meta:
+        model = Task
+        fields = ["uid", "description", "pomodoros"]
+        read_only_fields = ["uid", "description" "pomodoros"]

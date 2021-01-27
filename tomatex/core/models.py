@@ -2,6 +2,8 @@ import uuid
 
 from django.db import models
 
+from tomatex.core.managers import PomodoroManager
+
 POMODORO_UNIT_TIMER = 25
 ONE_MINUTE = 60
 
@@ -22,6 +24,8 @@ class Pomodoro(models.Model):
     started_at = models.DateTimeField()
     ended_at = models.DateTimeField()
     completed = models.BooleanField(default=False)
+
+    objects = PomodoroManager()
 
     def clean(self) -> None:
         diff = self.ended_at - self.started_at

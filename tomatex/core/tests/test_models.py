@@ -26,3 +26,19 @@ def test_task_pomodoro_model(add_task, add_pomodoro):
     assert pomodoro.id
     assert pomodoro.task.id == task.id
     assert pomodoro.completed
+
+
+@pytest.mark.django_db
+def test_count_completed_pomodoros(add_task, add_pomodoro):
+    task = add_task(description="Task Pomodoro")
+    add_pomodoro(task=task, completed=True)
+
+    assert task.pomodoros.total_completed() == 1
+
+
+@pytest.mark.django_db
+def test_count_incompleted_pomodoros(add_task, add_pomodoro):
+    task = add_task(description="Task Pomodoro")
+    add_pomodoro(task=task, completed=False)
+
+    assert task.pomodoros.total_incompleted() == 1
