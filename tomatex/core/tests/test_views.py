@@ -116,28 +116,30 @@ def test_remove_task(client, add_task):
     assert not Task.objects.exists()
 
 
-def test_request_task_pomodoros(client):
-    import uuid
+@pytest.mark.django_db
+def test_request_task_pomodoros(client, add_task):
+    task = add_task(description="Task Pomodoro")
 
-    uid = uuid.uuid4()
-    resp = client.get(f"/api/tasks/{uid}/pomodoros")
+    resp = client.get(f"/api/tasks/{task.uid}/pomodoros")
 
     assert resp.status_code == 200
 
 
-def test_response_task_pomodoros(client):
-    import uuid
+@pytest.mark.django_db
+def test_response_task_pomodoros(client, add_task, add_pomodoro):
+    task = add_task(description="Task Pomodoro")
+    add_pomodoro(task=task, completed=True)
 
-    uid = uuid.uuid4()
-    resp = client.get(f"/api/tasks/{uid}/pomodoros")
+    resp = client.get(f"/api/tasks/{task.uid}/pomodoros")
+
+    total_completed = task.pomodoros.filter(completed=True).count()
+    total_incompleted = task.pomodoros.filter(completed=False).count()
 
     assert len(resp.data) > 0
-    assert "uid" in resp.data[0]
-    assert resp.data[0]["description"] == "Task Name"
-    assert len(resp.data[0]["completed"]) > 0
-    assert resp.data[0]["completed"][0]["started_at"] == "2020-01-01T12:00:00"
-    assert resp.data[0]["completed"][0]["ended_at"] == "2020-01-01T12:25:00"
-    assert resp.data[0]["completed"][0]["duration"] == "25:00"
+    assert resp.data["uid"] == str(task.uid)
+    assert resp.data["description"] == task.description
+    assert resp.data["pomodoros"]["completed"] == total_completed
+    assert resp.data["pomodoros"]["incompleted"] == total_incompleted
 
 
 @pytest.mark.django_db

@@ -4,7 +4,11 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from tomatex.core.models import Task
-from tomatex.core.serializers import TaskPomodoroSerializer, TaskSerializer
+from tomatex.core.serializers import (
+    TaskPomodoroSerializer,
+    TaskPomodorosSerializer,
+    TaskSerializer,
+)
 
 
 class TaskCreateAPIView(APIView):
@@ -45,23 +49,10 @@ class TaskDetailAPIView(APIView):
 
 class TaskPomodoroAPIView(APIView):
     def get(self, request, uid):
-        import uuid
+        task = get_object_or_404(Task, uid=uid)
+        serializer = TaskPomodorosSerializer(task)
 
-        return Response(
-            [
-                {
-                    "uid": uuid.uuid4(),
-                    "description": "Task Name",
-                    "completed": [
-                        {
-                            "started_at": "2020-01-01T12:00:00",
-                            "ended_at": "2020-01-01T12:25:00",
-                            "duration": "25:00",
-                        }
-                    ],
-                }
-            ]
-        )
+        return Response(serializer.data)
 
     def post(self, request, uid):
         task = get_object_or_404(Task, uid=uid)
@@ -69,11 +60,6 @@ class TaskPomodoroAPIView(APIView):
         if serializer.is_valid():
             serializer.save()
 
-        # data = {
-        #     "started_at": serializer.initial_data["started_at"],
-        #     "ended_at": serializer.initial_data["ended_at"],
-        #     "completed": True,
-        # }
         return Response(
             serializer.data,
             status=status.HTTP_201_CREATED,
