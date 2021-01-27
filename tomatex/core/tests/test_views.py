@@ -172,3 +172,31 @@ def test_response_create_new_pomodoro(client, add_task):
     assert resp.data["started_at"] == serializer.data["started_at"]
     assert resp.data["ended_at"] == serializer.data["ended_at"]
     assert resp.data["completed"]
+
+
+@pytest.mark.django_db
+def test_dont_create_pomodoro_with_invalid_property(client, add_task):
+    task = add_task(description="Task #1")
+
+    data = {"created_at": "2020-01-01T12:00:00", "ended_at": "2020-01-01T12:25:00"}
+    resp = client.post(
+        f"/api/tasks/{task.uid}/pomodoros",
+        data,
+        content_type="application/json",
+    )
+
+    assert resp.status_code == 400
+
+
+@pytest.mark.django_db
+def test_dont_create_pomodoro_with_invalid_datetime_format(client, add_task):
+    task = add_task(description="Task #1")
+
+    data = {"created_at": "2020-01-1@12:00:00", "ended_at": "2020-1-01TT12:25:00T"}
+    resp = client.post(
+        f"/api/tasks/{task.uid}/pomodoros",
+        data,
+        content_type="application/json",
+    )
+
+    assert resp.status_code == 400
