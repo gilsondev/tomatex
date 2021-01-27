@@ -132,8 +132,8 @@ def test_response_task_pomodoros(client, add_task, add_pomodoro):
 
     resp = client.get(f"/api/tasks/{task.uid}/pomodoros")
 
-    total_completed = task.pomodoros.filter(completed=True).count()
-    total_incompleted = task.pomodoros.filter(completed=False).count()
+    total_completed = task.pomodoros.total_completed()
+    total_incompleted = task.pomodoros.total_incompleted()
 
     assert len(resp.data) > 0
     assert resp.data["uid"] == str(task.uid)

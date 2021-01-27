@@ -38,10 +38,10 @@ class PomodorosInfoSerializer(serializers.ModelSerializer):
         fields = ["completed", "incompleted"]
 
     def get_completed(self, obj):
-        return obj.filter(completed=True).count()
+        return obj.total_completed()
 
     def get_incompleted(self, obj):
-        return obj.filter(completed=False).count()
+        return obj.total_incompleted()
 
 
 class TaskPomodorosSerializer(serializers.ModelSerializer):
